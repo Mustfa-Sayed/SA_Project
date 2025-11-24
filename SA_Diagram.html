@@ -1,0 +1,359 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>System Analysis Diagrams</title>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/mermaid/10.6.1/mermaid.min.js"></script>
+    <link rel="stylesheet" href="Style.css">
+</head>
+<body>
+    <div class="container">
+        <h1>⚽ Football Club Management System</h1>
+        <p class="subtitle">System Analysis & Design Diagrams</p>
+
+        <!-- Data Flow Diagram -->
+        <div class="diagram-section">
+            <h2>📊 Data Flow Diagram (DFD)</h2>
+            <div class="mermaid">
+                graph TB
+                    %% External Entities
+                    Admin[Club Manager/Admin]
+                    Coach[Coaches/Trainers]
+                    Player[Players]
+                    Mod[Moderators/Staff]
+                    Med[Medical Staff]
+                    Scout[Scouts/Transfer Agents]
+                    Vendor[Vendors/Suppliers]
+                    
+                    %% Processes
+                    P1((Manage<br/>Players))
+                    P2((Manage<br/>Trainers))
+                    P3((Manage<br/>Staff))
+                    P4((Performance<br/>Monitoring))
+                    P5((Medical<br/>Management))
+                    P6((Transfer &<br/>Contract<br/>Management))
+                    
+                    %% Data Stores
+                    D1[(D1: Player<br/>Database)]
+                    D2[(D2: Staff<br/>Database)]
+                    D3[(D3: Coaches<br/>Database)]
+                    D4[(D4: Medical<br/>Reports)]
+                    
+                    %% Connections
+                    Admin -->|Player Info| P1
+                    Mod -->|Player Data| P1
+                    P1 -->|Store| D1
+                    D1 -->|Retrieve| P1
+                    
+                    Admin -->|Trainer Info| P2
+                    P2 -->|Store| D3
+                    D3 -->|Retrieve| P2
+                    
+                    Admin -->|Staff Info| P3
+                    P3 -->|Store| D2
+                    D2 -->|Retrieve| P3
+                    
+                    Coach -->|Performance Data| P4
+                    P4 -->|Update| D1
+                    D1 -->|Statistics| P4
+                    
+                    Med -->|Medical Reports| P5
+                    P5 -->|Store| D4
+                    D4 -->|Retrieve| P5
+                    P5 -->|Update Status| D1
+                    
+                    Scout -->|Transfer Info| P6
+                    Vendor -->|Contract Info| P6
+                    P6 -->|Update| D1
+                    
+                    style Admin fill:#ff6b6b
+                    style Coach fill:#4ecdc4
+                    style Player fill:#95e1d3
+                    style Mod fill:#f38181
+                    style Med fill:#aa96da
+                    style Scout fill:#fcbad3
+                    style Vendor fill:#ffffd2
+                    style P1 fill:#667eea,color:#fff
+                    style P2 fill:#667eea,color:#fff
+                    style P3 fill:#667eea,color:#fff
+                    style P4 fill:#667eea,color:#fff
+                    style P5 fill:#667eea,color:#fff
+                    style P6 fill:#667eea,color:#fff
+                    style D1 fill:#764ba2,color:#fff
+                    style D2 fill:#764ba2,color:#fff
+                    style D3 fill:#764ba2,color:#fff
+                    style D4 fill:#764ba2,color:#fff
+            </div>
+        </div>
+
+        <!-- Class Diagram -->
+        <div class="diagram-section">
+            <h2>🏗️ Class Diagram</h2>
+            <div class="mermaid">
+                classDiagram
+                    class User {
+                        -int userID
+                        -string name
+                        -int age
+                        -string phone
+                        -string password
+                        +login()
+                    }
+                    
+                    class Player {
+                        -string position
+                        -int jerseyNumber
+                        -string injuryStatus
+                        +joinTraining()
+                    }
+                    
+                    class Coach {
+                        -string role
+                        -List assignedPlayers
+                        +createTrainingSession()
+                        +updatePlayerPerformance()
+                    }
+                    
+                    class MedicalStaff {
+                        -string specialization
+                        -List assignedPlayers
+                        -List medicalReports
+                        +createMedicalReport()
+                        +updatePlayerStatus()
+                    }
+                    
+                    class Moderator {
+                        -int permissionLevel
+                        +buyPlayer()
+                        +scheduleMatch()
+                        +assignCoachToPlayer()
+                    }
+                    
+                    class Admin {
+                        +addUser()
+                        +removeUser()
+                    }
+                    
+                    class TrainingSession {
+                        -int trainingID
+                        -datetime time
+                        -Coach coach
+                        -List players
+                        +addPlayer()
+                        +removePlayer()
+                    }
+                    
+                    class MedicalReport {
+                        -int reportID
+                        -Player player
+                        -MedicalStaff staff
+                        -date date
+                        -string status
+                    }
+                    
+                    User <|-- Player
+                    User <|-- Coach
+                    User <|-- MedicalStaff
+                    User <|-- Moderator
+                    User <|-- Admin
+                    
+                    Coach "1" --> "*" TrainingSession : creates
+                    TrainingSession "*" --> "*" Player : includes
+                    MedicalStaff "1" --> "*" MedicalReport : creates
+                    MedicalReport "*" --> "1" Player : for
+            </div>
+        </div>
+
+        <!-- Activity Diagram - Manage Players -->
+        <div class="diagram-section">
+            <h2>🔄 Activity Diagram - Manage Players</h2>
+            <div class="mermaid">
+                graph TD
+                    Start([Start])
+                    Login[Admin/Moderator logs in]
+                    Select[Select Players Management]
+                    Decision{Add / Edit /<br/>Remove?}
+                    
+                    AddInfo[Enter player info]
+                    SaveAdd[Save]
+                    ConfirmAdd[Confirmation]
+                    
+                    SelectPlayer[Select player]
+                    UpdateInfo[Update info]
+                    SaveEdit[Save changes]
+                    
+                    SelectDel[Select player]
+                    ConfirmDel[Confirm deletion]
+                    
+                    Update[System updates<br/>player records]
+                    End([End])
+                    
+                    Start --> Login
+                    Login --> Select
+                    Select --> Decision
+                    
+                    Decision -->|Add| AddInfo
+                    AddInfo --> SaveAdd
+                    SaveAdd --> ConfirmAdd
+                    ConfirmAdd --> Update
+                    
+                    Decision -->|Edit| SelectPlayer
+                    SelectPlayer --> UpdateInfo
+                    UpdateInfo --> SaveEdit
+                    SaveEdit --> Update
+                    
+                    Decision -->|Remove| SelectDel
+                    SelectDel --> ConfirmDel
+                    ConfirmDel --> Update
+                    
+                    Update --> End
+                    
+                    style Start fill:#95e1d3
+                    style End fill:#ff6b6b
+                    style Decision fill:#ffd93d
+                    style Update fill:#667eea,color:#fff
+            </div>
+        </div>
+
+        <!-- Activity Diagram - Performance Monitoring -->
+        <div class="diagram-section">
+            <h2>📈 Activity Diagram - Performance Monitoring</h2>
+            <div class="mermaid">
+                graph TD
+                    Start([Start])
+                    Login[Coach logs in]
+                    Select[Select Player Performance]
+                    Choose[Choose player]
+                    Enter[Enter performance metrics]
+                    Save[Save performance record]
+                    Update[System updates<br/>performance history]
+                    End([End])
+                    
+                    Start --> Login
+                    Login --> Select
+                    Select --> Choose
+                    Choose --> Enter
+                    Enter --> Save
+                    Save --> Update
+                    Update --> End
+                    
+                    style Start fill:#95e1d3
+                    style End fill:#ff6b6b
+                    style Update fill:#667eea,color:#fff
+            </div>
+        </div>
+
+        <!-- Activity Diagram - Medical Management -->
+        <div class="diagram-section">
+            <h2>🏥 Activity Diagram - Medical Management</h2>
+            <div class="mermaid">
+                graph TD
+                    Start([Start])
+                    Login[Medical Staff logs in]
+                    Select[Select Player]
+                    Decision{New Report /<br/>Update Status?}
+                    
+                    AddDiag[Add diagnosis]
+                    SaveReport[Save]
+                    
+                    ModifyStatus[Modify injury status]
+                    SaveStatus[Save]
+                    
+                    Notify[Notify coach + admin]
+                    Store[System stores<br/>medical records]
+                    End([End])
+                    
+                    Start --> Login
+                    Login --> Select
+                    Select --> Decision
+                    
+                    Decision -->|New Report| AddDiag
+                    AddDiag --> SaveReport
+                    SaveReport --> Notify
+                    
+                    Decision -->|Update Status| ModifyStatus
+                    ModifyStatus --> SaveStatus
+                    SaveStatus --> Notify
+                    
+                    Notify --> Store
+                    Store --> End
+                    
+                    style Start fill:#95e1d3
+                    style End fill:#ff6b6b
+                    style Decision fill:#ffd93d
+                    style Store fill:#667eea,color:#fff
+            </div>
+        </div>
+
+        <!-- Sequence Diagram - Manage Players -->
+        <div class="diagram-section">
+            <h2>🔀 Sequence Diagram - Manage Players</h2>
+            <div class="mermaid">
+                sequenceDiagram
+                    participant M as Moderator
+                    participant UI as System UI
+                    participant DB as Database
+                    
+                    M->>UI: Login
+                    UI->>M: Show Dashboard
+                    M->>UI: Select Player Management
+                    UI->>M: Show Options (Edit/Delete)
+                    
+                    alt Edit Player
+                        M->>UI: Choose Edit
+                        M->>UI: Enter Player ID
+                        UI->>DB: Fetch Player Data
+                        DB->>UI: Return Player Data
+                        UI->>M: Display Player Info
+                        M->>UI: Enter New Values
+                        M->>UI: Save Changes
+                        UI->>DB: Update Player Record
+                        DB->>UI: Confirm Update
+                        UI->>M: Success Message
+                    else Delete Player
+                        M->>UI: Choose Delete
+                        M->>UI: Enter Player ID
+                        M->>UI: Confirm Deletion
+                        UI->>DB: Delete Player Record
+                        DB->>UI: Confirm Deletion
+                        UI->>M: Success Message
+                    end
+            </div>
+        </div>
+
+        <!-- Sequence Diagram - Medical Management -->
+        <div class="diagram-section">
+            <h2>🩺 Sequence Diagram - Medical Management</h2>
+            <div class="mermaid">
+                sequenceDiagram
+                    participant MS as Medical Staff
+                    participant UI as System UI
+                    participant DB as Database
+                    participant A as Admin
+                    
+                    MS->>UI: Login
+                    UI->>MS: Show Dashboard
+                    MS->>UI: Enter Player ID
+                    UI->>DB: Fetch Player Medical Data
+                    DB->>UI: Return Medical History
+                    MS->>UI: Update Player Status
+                    MS->>UI: Enter Medical Report
+                    UI->>DB: Save Medical Report
+                    DB->>UI: Confirm Save
+                    UI->>A: Send Notification
+                    A->>A: Review Medical Report
+                    UI->>MS: Success Message
+            </div>
+        </div>
+
+        <div class="note">
+            <strong>💡 Tip:</strong> You can take screenshots of individual diagrams or print this page to PDF for your documentation!
+        </div>
+    </div>
+
+    <script src="Scripts.js">
+        
+    </script>
+</body>
+</html>
